@@ -1,0 +1,139 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <!-- [ Main Content ] start -->
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                                <!-- [ rating list ] end-->
+                                <div class="col-xl col-md-12 m-b-30">
+                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                                                aria-controls="home" aria-selected="false">Active</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link " id="profile-tab" data-toggle="tab"
+                                                href="#profile" role="tab" aria-controls="profile" aria-selected="true">Closed</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content" id="myTabContent">
+                                        <div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Phone</th>
+                                                    <th>Proxy</th>
+                                                    <th>Time left</th>
+                                                    <th></th>
+                                                    <th class="text-right"></th>
+                                                </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                  {% for bot in bot_list %}
+                                                    {% if bot.is_active %}
+                                                      <tr>
+                                                        <td>
+                                                            <h6 class="m-0"><img class="rounded-circle m-r-10"
+                                                                                    style="width:40px;"
+                                                                                    src="{{ ASSETS_ROOT }}/images/user/avatar-2.jpg"
+                                                                                    ></h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="m-0">{{bot.phone}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="m-0">{{bot.proxy}}</h6>
+                                                            <p>provider.com</p>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="text-muted"><i
+                                                                    class="fas fa-circle text-c-green f-10 m-r-15"></i>{{bot.time_left}}</h6>
+                                                        </td>
+                                                        <td><a href="#!" class="label theme-bg2 text-white f-12">Close</a>
+                                                        </td>
+                                                      </tr>
+                                                    {% endif %}
+                                                  {% endfor %}
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                        <div class="tab-pane fade" id="profile" role="tabpanel"
+                                                aria-labelledby="profile-tab">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Phone</th>
+                                                        <th>Proxy</th>
+                                                        <th></th>
+                                                        <th class="text-right"></th>
+                                                    </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                      {% for bot in bot_list %}
+                                                        {% if not bot.is_active %}
+                                                          <tr>
+                                                            <td>
+                                                                <h6 class="m-0"><img class="rounded-circle m-r-10"
+                                                                                        style="width:40px;"
+                                                                                        src="{{ ASSETS_ROOT }}/images/user/avatar-2.jpg"
+                                                                                        ></h6>
+                                                            </td>
+                                                            <td>
+                                                                <h6 class="m-0">{{bot.phone}}</h6>
+                                                            </td>
+                                                            <td>
+                                                                <h6 class="m-0">{{bot.proxy}}</h6>
+                                                                <p>provider.com</p>
+                                                            </td>
+                                                            <td>
+                                                                <h6 class="text-muted"><i
+                                                                        class="fas fa-circle text-c-red f-10 m-r-15"></i>11 MAY
+                                                                    10:35</h6>
+                                                            </td>
+                                                            <td><a href="#!" class="label theme-bg text-white f-12">Active</a>
+                                                            </td>
+                                                        {% endif %}
+                                                      {% endfor %}
+                                                    </tbody>
+                                                </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- [ Main Content ] end -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- [ Main Content ] end -->
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

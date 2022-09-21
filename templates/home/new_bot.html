@@ -1,0 +1,137 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Forms {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <!-- [ Main Content ] start -->
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                              <div id="error_div" class="col-sm-12" style="display:none">
+                                <div class="card">
+                                  <div class="card-header">
+                                      <h5>Errors</h5>
+                                  </div>
+                                  <div class="card-body">
+                                    <p id="error_p" class="text-muted mb-4">esto es un error</p>
+                                  </div>
+                                </div>
+                              </div>
+                                <div class="col-sm-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Create new bot</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                  <h5 class="mt-1">Bot data</h5>
+                                                  <hr>
+
+                                                  <form enctype="multipart/form-data" class="" action="new_bot.html" method="post">
+                                                    {% csrf_token %}
+
+                                                    {% for field in form %}
+                                                        <div class="form-group">
+                                                          <label for="{{field.name}}">{{field.label}}</label>
+                                                          {{ field }}
+                                                          {% if field.errors %}
+                                                            <small class="form-text" style="color:var(--danger)">{{ field.errors.as_text }}</small>
+                                                          {% endif %}
+                                                        </div>
+                                                    {%endfor%}
+
+                                                  <button id="send_form" type="submit" class="btn btn-primary">Create</button>
+                                                </form>
+                                              </div>
+                                              <div class="col-md-6"  id="divimgqr" style="visibility:hidden">
+                                                <h5 class="mt-1">Scan the QR to login!</h5>
+                                                <hr>
+                                                <div class="media">
+                                                    <img id="imgqr" src="{{ ASSETS_ROOT }}/images/loading1.gif" alt="" style="width:60%">
+                                                </div>
+                                              </div>
+                                        </div>
+
+                                  </div>
+                               </div>
+                          </div>
+
+                          <!-- [ Main Content ] end -->
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- [ Main Content ] end -->
+
+{% endblock content %}
+
+{% block javascripts %}
+
+<script type="text/javascript">
+  console.log("{{errors}}");
+  if ("{{ errors }}" == "false"){
+
+    var inputphone = $("input[name=phone]");
+    var inputproxy = $("input[name=proxy]");
+
+    //Connect to the socket
+    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+    var ws_path = ws_scheme + '://' + window.location.host + '/new_bot/';
+    var socket = new WebSocket(ws_path);
+
+    socket.addEventListener('open', (event) => {
+      console.log("Conectando a " + socket);
+
+      //Send start message
+      socket.send(JSON.stringify({
+        status: "start",
+        phone: inputphone.val(),
+        proxy: inputproxy.val(),
+      }));
+      $("#divimgqr").css("visibility", "visible");
+
+      socket.onmessage = function(e) {
+        data = JSON.parse(e.data);
+
+        switch (data["msg"]) {
+          case "qrgenerated":
+            $("#imgqr").attr("src", data["data"]);
+            inputphone.prop("readonly", true);
+            inputproxy.prop("readonly", true);
+            break;
+          case "login":
+            if(data["status"]){
+              alert("Bot created successfully!!");
+              window.location = "bot_detail.html?phone="+inputphone.val()
+            }else{
+              alert("cant create the bot");
+            }
+            window.location = "new_bot.html"
+            break;
+          case "error":
+            $("#error_div").css("display", "");
+            $("#divimgqr").css("visibility", "hidden");
+            $("#error_p").html(data["exception"]);
+            break;
+          default:
+
+        }
+      }
+    });
+  }
+</script>
+
+{% endblock %}

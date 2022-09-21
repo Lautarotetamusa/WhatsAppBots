@@ -1,0 +1,15 @@
+#DB
+db.sqlite3
+dump.rdb
+
+#Notebook
+*.ipynb
+ipynb_checkpoints/
+
+#pycache
+**/__pycache__/
+.venv/
+
+#Celery
+celery.logs
+celerybeat-schedule

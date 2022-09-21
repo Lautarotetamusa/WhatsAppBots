@@ -1,0 +1,83 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Forms {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <!-- [ Main Content ] start -->
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Create new campaign</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                  <h5 class="mt-1">Campaign data</h5>
+                                                  <hr>
+
+                                                  <form enctype="multipart/form-data" class="" action="new_campaign.html" method="post">
+                                                    {% csrf_token %}
+
+                                                    {% for field in form %}
+                                                        <div class="form-group">
+                                                          {{ field.label_tag }}
+                                                          {{ field }}
+                                                          {% if field.errors %}
+                                                            <small class="form-text" style="color:var(--danger)">{{ field.errors.as_text }}</small>
+                                                          {% endif %}
+
+                                                          {% if field.field.widget.attrs.class == "custom-range" %}
+                                                            <small class="form-text muted-text"></small>
+                                                          {% endif %}
+                                                        </div>
+                                                    {%endfor%}
+
+                                                  <button id="send_form" type="submit" class="btn btn-primary">Create</button>
+                                                  </form>
+                                                </div>
+                                              </div>
+                                        </div>
+                                  </div>
+                               </div>
+                            <!-- [ Main Content ] end -->
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- [ Main Content ] end -->
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script type="text/javascript">
+  $("input").on("input", function(){
+    $(this).removeAttr("style")
+  });
+
+  $("input[type=range]").next().each(function (e){
+    $(this).html($(this).prev().val() + " minutes")
+  });
+  $("input[type=range]").change(function(){
+  	$(this).next().html($(this).val() + " minutes")
+  });
+</script>
+
+{% endblock javascripts %}

@@ -1,0 +1,7 @@
+Django==4.1
+celery==5.2.7
+redis==4.3.4
+selenium==4.1.0
+channels==3.0.5
+spintax==1.0.4
+phonenumbers==8.12.55
