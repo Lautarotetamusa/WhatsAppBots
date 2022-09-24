@@ -1,6 +1,6 @@
 from django.db import models
 
-from driver import wppdriver, campaigndriver
+from driver import wppdriver
 
 class Bot(models.Model, wppdriver.WhatsAppDriver):
     phone = models.CharField(max_length=15, primary_key=True)

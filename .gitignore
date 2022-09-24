@@ -13,3 +13,6 @@ ipynb_checkpoints/
 #Celery
 celery.logs
 celerybeat-schedule
+
+#Driver zip file
+driver/proxy_auth_plugin.zip
