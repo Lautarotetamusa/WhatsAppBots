@@ -33,15 +33,14 @@ class CreateBotConsumer(JsonWebsocketConsumer):
                     "data": qrdata
                 })
 
-                is_login = bot.is_login()
-                if is_login:
-                    bot.login_at = datetime.now()
-                    bot.is_active = True
-                    bot.save()
+                bot.is_login()
 
-                self.send_json({"msg": "login", "status": is_login})
+                bot.login_at = datetime.now()
+                bot.is_active = True
+                bot.save()
+
+                self.send_json({"msg": "login", "status": True})
             except Exception as e:
                 error  = e.__class__.__name__ + "\n"
                 error += str(e) + "\n"
-
                 self.send_json({"msg": "error", "exception": error})

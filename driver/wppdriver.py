@@ -54,7 +54,7 @@ class WhatsAppDriver:
 
     def is_login(self):
         try:
-            self.wait_visible('//div[@data-testid="chat-list-search"]', 20)
+            self.wait_visible('//div[@data-testid="chat-list-search"]', 40)
         except Exception as e:
             raise NotLogin() from e
 
