@@ -1,0 +1,191 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <!-- [ Main Content ] start -->
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                                <!-- [ rating list ] end-->
+                                <div class="col-xl col-md-12 m-b-30">
+                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active show" id="home-tab" data-toggle="tab" href="#running" role="tab"
+                                                aria-controls="home" aria-selected="true">Running</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link " id="profile-tab" data-toggle="tab"
+                                                href="#pending" role="tab" aria-controls="profile" aria-selected="false">Pending</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link " id="profile-tab" data-toggle="tab"
+                                                href="#finished" role="tab" aria-controls="profile" aria-selected="false">Finished</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content" id="myTabContent">
+                                        <div class="tab-pane fade active show" id="running" role="tabpanel" aria-labelledby="home-tab">
+
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th>Id</th>
+                                                    <th>Start at</th>
+                                                    <th>End at</th>
+                                                    <th>File</th>
+                                                    <th></th>
+                                                    <th class="text-right"></th>
+                                                </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                  {% for campaign in campaigns %}
+                                                    {% if campaign.status == campaign.RUNNING %}
+                                                      <tr>
+                                                        <td>
+                                                            <h6 class="m-0">{{campaign.pk}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="m-0">{{campaign.start_at}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="m-0">{{campaign.end_at}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="m-0">{{campaign.posts}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="text-muted"><i class="fas fa-circle text-c-green f-10 m-r-15"></i>Running</h6>
+                                                        </td>
+                                                        <td>
+                                                          <a href="campaign_detail.html?id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Details</a>
+                                                          <a href="messages.html?campaign_id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Messages</a>
+                                                          <a href="statistics.html?campaign_id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Statistics</a>
+                                                        </td>
+                                                      </tr>
+                                                    {% endif %}
+                                                  {% endfor %}
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                        <div class="tab-pane fade" id="pending" role="tabpanel" aria-labelledby="home-tab">
+
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th>Id</th>
+                                                    <th>Start at</th>
+                                                    <th>End at</th>
+                                                    <th>File</th>
+                                                    <th></th>
+                                                    <th class="text-right"></th>
+                                                </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                  {% for campaign in campaigns %}
+                                                    {% if campaign.status == campaign.PENDING %}
+                                                      <tr>
+                                                        <td>
+                                                            <h6 class="m-0">{{campaign.pk}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="m-0">{{campaign.start_at}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="m-0">{{campaign.end_at}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="m-0">{{campaign.posts}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="text-muted"><i class="fas fa-circle text-c-grey f-10 m-r-15"></i>Pending</h6>
+                                                        </td>
+                                                        <td>
+                                                          <a href="campaign_detail.html?id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Details</a>
+                                                          <a href="statistics.html?campaign_id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Statistics</a>
+                                                        </td>
+                                                      </tr>
+                                                    {% endif %}
+                                                  {% endfor %}
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                        <div class="tab-pane fade" id="finished" role="tabpanel" aria-labelledby="home-tab">
+
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th>Id</th>
+                                                    <th>Start at</th>
+                                                    <th>End at</th>
+                                                    <th>File</th>
+                                                    <th></th>
+                                                    <th class="text-right"></th>
+                                                </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                  {% for campaign in campaigns %}
+                                                    {% if campaign.status == campaign.FINISHED %}
+                                                      <tr>
+                                                        <td>
+                                                            <h6 class="m-0">{{campaign.pk}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="m-0">{{campaign.start_at}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="m-0">{{campaign.end_at}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="m-0">{{campaign.posts}}</h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="text-muted"><i class="fas fa-circle text-c-red f-10 m-r-15"></i>Finished</h6>
+                                                        </td>
+                                                        <td>
+                                                          <a href="campaign_detail.html?id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Details</a>
+                                                          <a href="messages.html?campaign_id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Messages</a>
+                                                          <a href="statistics.html?campaign_id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Statistics</a>
+                                                        </td>
+                                                      </tr>
+                                                    {% endif %}
+                                                  {% endfor %}
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- [ Main Content ] end -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- [ Main Content ] end -->
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

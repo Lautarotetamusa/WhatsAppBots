@@ -30,12 +30,15 @@
     <!-- dark mode css -->
     <link rel="stylesheet" href="{{ ASSETS_ROOT }}/css/dark.css">
 
+    <!--chart -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous" />
+
     <!-- Specific CSS goes HERE -->
     {% block stylesheets %}{% endblock stylesheets %}
 
 </head>
 <body>
-    
+
     {% block content %}{% endblock content %}
 
     <!-- Enable the dark mode -->
@@ -47,7 +50,7 @@
     {% include 'includes/scripts.html' %}
 
     <!-- Specific Page JS goes HERE  -->
-    {% block javascripts %}{% endblock javascripts %}    
+    {% block javascripts %}{% endblock javascripts %}
 
 </body>
 </html>

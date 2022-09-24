@@ -1,5 +1,19 @@
 import phonenumbers
+import json
 import csv
+
+#Para convertir un json que sale de airbyte en un csv que pueda usar
+def json2csv(filepath):
+    with open(filepath, "r") as jsonfile:
+        posts = json.load(jsonfile)
+
+    outpath = filepath.replace('.json', '_parse.csv')
+    print(outpath)
+    with open(outpath, "w") as csvfile:
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerow(posts[0]["_airbyte_data"].keys())
+        for post in posts:
+            csv_writer.writerow(post["_airbyte_data"].values())
 
 def parse_phones(filepath):
 

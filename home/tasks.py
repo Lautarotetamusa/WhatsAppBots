@@ -4,7 +4,7 @@ from celery import shared_task
 from home.celery import app
 from home import settings
 
-from home.models import Campaign, Bot, Message
+from home.models import Campaign, Bot, Message, Response
 from utils.timefunctions import parse_time
 from utils import spintax
 from datetime import datetime, date, timedelta
@@ -69,6 +69,41 @@ def manage_campaign():
         print("end:",   times["end_at"])
         print("task id:", task.id)
 
+#Envia un mensaje desde un bot a un numero y guarda los resultados
+@shared_task
+def send_message(bot, reciver, campaign, text, max_tries=2):
+
+    print("Sending message to", reciver)
+
+    for _ in range(max_tries):
+        message = Message(
+            sender = bot,
+            campaign = campaign,
+            text = text,
+            reciver = reciver,
+            consume = bot.consumed()
+        )
+
+        try:
+            bot.send(reciver, text)
+            print("Sended successfuly")
+            message.error = None
+            break
+        except NotLogin:
+            print("the session", bot.phone, "is closed")
+            message.error = "session closed"
+            bot.is_active = False
+            bot.save()
+            break
+        except Exception as e:
+            message.error = e
+            print(e)
+
+            message.success = (message.error == None)
+
+        message.save()
+    #return message.pk
+
 #Envia todos los mensajes en un dia
 @shared_task
 def send_messages(campaign_pk):
@@ -95,6 +130,7 @@ def send_messages(campaign_pk):
             bots = Bot.objects.filter(is_active=True)
 
             if len(bots) == 0:
+                print("any active bots")
                 break
 
             bot = bots[bot_i%len(bots)]
@@ -102,6 +138,11 @@ def send_messages(campaign_pk):
 
             campaign.nro_post += 1
             campaign.save()
+
+            if post["phone"] == "":
+                print("Phone field is empty")
+                print(post)
+                continue
 
             print("----------------------------------")
             print(bot.phone)
@@ -117,53 +158,40 @@ def send_messages(campaign_pk):
                 print(e)
                 continue
 
-            if post["phone"] == "":
-                print("Phone field is empty")
-                continue
-
-            print("sending message to", post["phone"])
-
             #Send the message
             msg = spintax.format(campaign.spintax, post)
+            send_message(bot, post["phone"], campaign, msg)
 
-            #Save the Message objects
-            message = Message(
-                sender = bot,
-                campaign = campaign,
-                text = msg,
-                reciver = post["phone"],
-                consume = bot.consumed()
-            )
+            #Autoresponses
+            if campaign.response_spintax != "":
+                new_messages = bot.get_messages()
 
-            try:
-                bot.send(post["phone"], msg)
-            except NotLogin:
-                print("the session", bot.phone, "is closed")
-                message.error = "session closed"
-                bot.is_active = False
-                bot.save()
-            except Exception as e:
-                print(e)
-                message.error = e
+                for message in new_messages:
+                    if Message.objects.filter(reciver=message["number"]).count() == 1:
+                        print("++++++++++++++++++++++++++++++++++")
+                        print("Answer of:", message["number"])
+                        print(message["text"])
 
-            message.success = (message.error == None)
+                        response = Response(
+                            sender = message["phone"],
+                            reciver= bot,
+                            text   = message["text"],
+                            campaign = campaign
+                        )
+                        response.save()
 
-            message.save()
+                        msg = spintax.spin(campaign.response_spintax)
+                        send_message(bot, number, campaign, msg)
+                        print("++++++++++++++++++++++++++++++++++")
+
             bot.close()
             print("----------------------------------")
 
-            #Wait for random minutes
             #Cuando pasa por todos los numeros
+            #Wait for random minutes
             if bot_i%len(bots) == 0:
                 print("Waiting...")
-
-                ####################
-                ########SACAR######
-                #msg_period=0.3
-                ####################
                 time.sleep(60*msg_period)
-
-
 
     print("Campaign finished")
     campaign.status = campaign.FINISHED

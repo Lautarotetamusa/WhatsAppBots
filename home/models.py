@@ -9,16 +9,6 @@ class Bot(models.Model, wppdriver.WhatsAppDriver):
     is_active = models.BooleanField(default=False)
     #provider =  models.CharField(max_length=15)
 
-"""
-class Proxy(models.Model):
-    ip
-    port
-    pass
-    user
-    provider
-
-"""
-
 class Campaign(models.Model):
     RUNNING = 0
     PENDING = 1
@@ -49,10 +39,16 @@ class Campaign(models.Model):
 class Message(models.Model):
     sender = models.ForeignKey(Bot, on_delete=models.CASCADE)
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
-    text = models.CharField(max_length=500)
     reciver = models.CharField(max_length=15)
+    text = models.CharField(max_length=500)
+
     sended_at = models.DateTimeField(auto_now_add=True)
     consume = models.FloatField(null=True)
-
     success = models.BooleanField(default=False, null=True)
     error = models.CharField(max_length=100, default=None, null=True)
+
+class Response(models.Model):
+    sender   = models.CharField(max_length=15) #El que envia es el cliente
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    reciver  = models.ForeignKey(Bot, on_delete=models.CASCADE) #El que recibe es el bot
+    text = models.CharField(max_length=250)

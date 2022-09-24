@@ -1,0 +1,128 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Forms {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- [ Main Content ] start -->
+<div class="pcoded-main-container">
+  <div class="pcoded-wrapper">
+    <div class="pcoded-content">
+      <div class="pcoded-inner-content">
+        <!-- [ breadcrumb ] end -->
+        <div class="main-body">
+          <div class="page-wrapper">
+            <!-- [ Main Content ] start -->
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="card">
+
+                  <div class="card-header">
+                    <h5>Filters</h5>
+                  </div>
+                  <div class="card-body">
+                    <form id="form_day" enctype="multipart/form-data" method="get" action="statistics.html">
+                      <div class="form-group">
+                        <input id="date_input" name="date_input" class="form-control" type="date"   value={{form.date_input}}>
+                      </div>
+                      <div class="form-group">
+                        <select id="campaign_id" name="campaign_id" class="mb-3 form-control" value=0>
+                          <option value="">All Campaigns</option>
+                          {% for i in campaigns %}
+                          <option value="{{i}}">Campaign {{i}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <select id="bot_phone" name="bot_phone" class="mb-3 form-control" value=0>
+                          <option value="">All Bots</option>
+                          {% for i in bots %}
+                          <option value="{{i}}">{{i}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <button id="send_form" type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                  </div>
+                </div>
+                <!-- [ Main Content ] end -->
+              </div>
+              <div class="col-sm-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h5>Message for campaign</h5>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="myChart" width="150" height="100"></canvas>
+                  </div>
+                </div>
+                <!-- [ Main Content ] end -->
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- [ Main Content ] end -->
+
+  {% endblock content %}
+
+  <!-- Specific Page JS goes HERE  -->
+  {% block javascripts %}
+  <script>
+
+    /*$("#date-input").on("change", function(){
+    $("#form_day").submit()
+  });*/
+  if ("{{form.campaign_id}}" != ""){
+    $("#campaign_id option[value={{form.campaign_id}}]").attr('selected', 'selected');
+  }
+  if ("{{form.bot_phone}}" != ""){
+    $("#bot_phone option[value={{form.bot_phone}}]").attr('selected', 'selected');
+  }
+
+  // jquery function
+  $(document).ready(function(){
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: [{%for d in data%}'{{d.label}}',{%endfor%}],
+        datasets: [{
+          label: '# of users',
+          data: [{%for d in data%}{{d.value}},{%endfor%}],
+          backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+          ],
+          borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock javascripts %}

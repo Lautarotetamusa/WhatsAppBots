@@ -12,6 +12,9 @@ def get_fields(msg):
     pat = r'(?<=\[).+?(?=\])'
     return re.findall(pat, msg)
 
+def spin(msg):
+    return spintax.spin(msg)
+
 def format(msg, post):
     spin = spintax.spin(msg)
 

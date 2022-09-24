@@ -3,14 +3,12 @@ from django.template import loader
 from django.shortcuts import render
 from django import template
 
-from home.models import Bot, Campaign
+from home.models import Bot, Campaign, Message
 from home.forms  import CampaignForm, BotForm
 from utils import csvfunctions
-
-from time import sleep
-import datetime                 #Para poder calcular la fecha de cierre de sesion
-from threading import Thread    #Para poder crear la sesion
 from home import settings
+
+import datetime                 #Para poder calcular la fecha de cierre de sesion
 
 def default(request):
 
@@ -29,23 +27,81 @@ def default(request):
     except:
         return render(request, 'home/page-500.html')
 
+#bots list
 def index(request):
     bot_list = Bot.objects.all()
-
-    context = {'segment': 'index', 'bot_list': bot_list}
 
     #Calcular el tiempo que queda hasta que se cierren las sesiones
     for bot in bot_list:
         if bot.is_active:
             time_end = bot.login_at + datetime.timedelta(days=14)
 
-            delta = time_end - datetime.datetime.now(datetime.timezone.utc) # as timedelta
-            print(delta)
+            bot.time_left = time_end - datetime.datetime.now(datetime.timezone.utc) # as timedelta
 
-            bot.time_left = delta
+    return render(request, "home/index.html", {'bot_list': bot_list})
 
-    html_template = loader.get_template('home/index.html')
-    return HttpResponse(html_template.render(context, request))
+#campaign list
+def campaigns(request):
+    campaigns = Campaign.objects.all()
+    return render(request, "home/campaigns.html", {"campaigns": campaigns})
+
+def statistics(request):
+    messages = Message.objects.all()
+
+    if request.GET:
+        if "campaign_id" in request.GET:
+            id = request.GET["campaign_id"]
+            if id != "": #Si el id es 0 estamos seleccionando todas las campañas
+                messages = messages.filter(campaign=id)
+
+        if "bot_phone" in request.GET:
+            bot_phone = request.GET["bot_phone"]
+            if bot_phone != "":            #Si el phone es 0 estamos seleccionando todas los bots
+                messages = messages.filter(sender=bot_phone)
+
+        if "date_input" in request.GET and request.GET["date_input"] != "":
+            date = datetime.datetime.strptime(request.GET["date_input"], "%Y-%m-%d")
+            messages = messages.filter(sended_at__day = date.day)
+
+    chart = [
+        {"label": "errors", "value": messages.filter(success=False).count()},
+        {"label": "success","value": messages.filter(success=True).count()}
+    ]
+
+    context = {
+        "data": chart,
+        "form": request.GET,
+        "campaigns": Campaign.objects.all().values_list("pk", flat=True),
+        "bots": Bot.objects.all().values_list("phone", flat=True)
+    }
+    return render(request, "home/statistics.html", context)
+
+def messages(request):
+    messages = Message.objects.all()
+
+    if request.GET:
+        if "campaign_id" in request.GET:
+            id = request.GET["campaign_id"]
+            if id != "": #Si el id es 0 estamos seleccionando todas las campañas
+                messages = messages.filter(campaign=id)
+
+        if "bot_phone" in request.GET:
+            bot_phone = request.GET["bot_phone"]
+            if bot_phone != "":            #Si el phone es 0 estamos seleccionando todas los bots
+                messages = messages.filter(sender=bot_phone)
+
+        if "date_input" in request.GET and request.GET["date_input"] != "":
+            date = datetime.datetime.strptime(request.GET["date_input"], "%Y-%m-%d")
+            messages = messages.filter(sended_at__day = date.day)
+
+    context = {
+        "messages": messages,
+        "total": messages.count(),
+        "form": request.GET,
+        "campaigns": Campaign.objects.all().values_list("pk", flat=True),
+        "bots": Bot.objects.all().values_list("phone", flat=True),
+    }
+    return render(request, "home/messages.html", context)
 
 def new_campaign(request):
     if request.method == 'POST':
@@ -95,6 +151,12 @@ def new_bot(request):
             for field in form.errors:
                 form[field].field.widget.attrs['style'] = 'border: 1px solid var(--danger);'
             has_error = "true"
+    elif "bot_phone" in request.GET:
+            bot = Bot.objects.get(phone=request.GET["bot_phone"])
+            form = BotForm({
+                "phone":bot.phone,
+                "proxy":bot.proxy
+            })
     else:
         form = BotForm()
 
@@ -109,13 +171,5 @@ def bot_detail(request):
     if len(find) > 0:
         context["bot"] = find[0]
 
-    template = loader.get_template('home/bot_detail.html')
-    return HttpResponse(template.render(context, request))
-
-def bots(request):
-    bot_list = Bot.objects.all()
-
-    context = {'segment': 'bots', 'bot_list': bot_list}
-
-    html_template = loader.get_template('home/bots.html')
-    return HttpResponse(html_template.render(context, request))
+    template = loader.get_template()
+    return render('home/bot_detail.html', context)

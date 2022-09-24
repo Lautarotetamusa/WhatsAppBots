@@ -33,7 +33,7 @@ class WhatsAppDriver:
         try:
             return WebDriverWait(self.driver, time).until(EC.invisibility_of_element_located((By.XPATH, element)))
         except exceptions.TimeoutException as e:
-            raise Exception(f'Element {element} not found') from e
+            raise Exception(f'Element {element} visible') from e
 
     def main_page(self):
         #Esperar a que cargue la pagina
@@ -79,9 +79,22 @@ class WhatsAppDriver:
     def get_messages(self):
         #todos los class de mensajes sin leer
         #no aparecen en orden, y no son todos
+        containers = self.driver.find_elements(By.XPATH, '//div[@class="_2nY6U vq6sj _3C4Vf"]')
 
-        titles = self.driver.find_elements(By.XPATH, '//div[@class="_2nY6U vq6sj _3C4Vf"]//div[@class="zoWT4"]//span')
-        return [title.get_attribute("title").replace(" ", "") for title in titles]
+        messages = []
+        for container in containers:
+            try:
+                number = container.find_element(By.XPATH, './/div[@class="zoWT4"]//span')
+                text   = container.find_element(By.XPATH, './/span[@class="Hy9nV"]')
+
+                messages.append({
+                    "number": re.sub(r" |\+", "", number.get_attribute("title")).encode("ascii", "ignore").decode(),
+                    "text": text.get_attribute("title").encode("ascii", "ignore").decode()
+                })
+            except Exception as e:
+                print(e)
+
+        return messages
 
     def send(self, phone, msg):
         send_url = "https://web.whatsapp.com/send/?phone={phone}&text={text}&app_absent=0"
@@ -107,4 +120,4 @@ class WhatsAppDriver:
         self.wait_visible("//button[@data-testid='compose-btn-send']", max_time).click()
 
         #Wait until the message has sended
-        self.wait_invisible('//span[@data-testid="msg-time"]', max_time)
+        self.wait_invisible('//span[@data-testid="msg-time"]', 15)
