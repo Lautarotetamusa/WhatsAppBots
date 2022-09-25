@@ -10,13 +10,6 @@ Whatsapp bots manager. Send massive amout of messages without whatsapp bussiness
   git clone https://github.com/Lautarotetamusa/WhatsAppBots.git
 ```
 
-#### Install python 3.10.6
-```
-  sudo apt install python
-  sudo apt install python-pip
-  sudo apt install python-venv
-```
-
 #### Install chromium==105.0.5195.52 and chromedriver==105.0.5195.52
 ```
   sudo snap install chromium
@@ -29,22 +22,7 @@ Whatsapp bots manager. Send massive amout of messages without whatsapp bussiness
   export DISPLAY=:10
 ```
 
-#### Make virtual enviroment
+#### Start the server
 ```
-  python -m venv .venv
-  source .venv/bin/activate
+  docker-compose up
 ```
-
-#### Install requirements
-```
-  pip install -r requirements.txt
-```
-
-### Migrate the DataBases
-```
-  python manage.py migrate
-```
-
-#### Run the server
-```
-  python manage.py runserver

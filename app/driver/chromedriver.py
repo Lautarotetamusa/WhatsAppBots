@@ -17,6 +17,7 @@ def get(session):
 
     #Session
     chrome_options.add_argument(f'--user-data-dir={dir}/sessions/{session.phone}')
+    print(f'--user-data-dir={dir}/sessions/{session.phone}')
 
     # Ignores any certificate errors if there is any
     chrome_options.add_argument("--ignore-certificate-errors")

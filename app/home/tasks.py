@@ -209,3 +209,9 @@ def terminate_running_campaign():
         app.control.revoke(campaign[0].task_id, terminate=True)
     else:
         print("No running campaigns")
+
+@shared_task
+def test_task():
+    print("task running")
+    time.sleep(60)
+    print("taks end")

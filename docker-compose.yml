@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+  django:
+    build: .
+    container_name: django
+    ports:
+      - "8000:8000"
+    command: >
+       sh -c "python manage.py migrate &&
+              python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./app:/app
+
+  celery:
+    build: .
+    container_name: celery
+    command: celery -A home.celery worker
+    volumes:
+      - ./app:/app
+    depends_on:
+      - django
+      - redis
+
+  celery-beat:
+    build: .
+    container_name: celery-beat
+    command: celery -A home.celery beat -l info
+    volumes:
+      - ./app:/app
+    depends_on:
+      - django
+      - redis
+      - celery
+
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    depends_on:
+      - django

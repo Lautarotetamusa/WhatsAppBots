@@ -105,7 +105,8 @@ class WhatsAppDriver:
 
         self.is_login()
 
-        self.wait_visible('//div[@data-animate-modal-popup="true"]', max_time)
+        #Esto lo comente en el server y anda bien
+        #self.wait_visible('//div[@data-animate-modal-popup="true"]', max_time)
 
         self.wait_invisible('//div[@data-testid="popup-controls-cancel"]', max_time)
 

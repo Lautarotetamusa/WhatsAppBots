@@ -1,14 +1,14 @@
 #DB
-db.sqlite3
+app/db.sqlite3
 dump.rdb
 
 #Notebook
 *.ipynb
-ipynb_checkpoints/
+**/.ipynb_checkpoints/
 
 #pycache
 **/__pycache__/
-.venv/
+**/.venv/
 
 #Celery
 celery.logs
