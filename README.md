@@ -8,6 +8,7 @@ Whatsapp bots manager. Send massive amout of messages without whatsapp bussiness
 #### Clone the repository
 ```
   git clone https://github.com/Lautarotetamusa/WhatsAppBots.git
+  cd WhatsAppBots
 ```
 
 #### [Docker installation](https://docs.docker.com/engine/install/)

@@ -10,5 +10,5 @@ RUN apk update
 RUN apk add chromium chromium-chromedriver xvfb
 
 COPY app/start_xvfb.sh .
-#RUN chmod +x ./start_xvfb.sh
+RUN chmod +x ./start_xvfb.sh
 #CMD /bin/sh start_xvfb.sh

@@ -1,6 +1,8 @@
-if pgrep Xvfb >/dev/null; then
+#!/bin/bash
+xvfb=$(pgrep Xvfb)
+if [ -z "$xvfb" ]; then
   Xvfb :10 -ac -screen 0 1024x768x8 &
-  echo "ejecutando Xvfb $!"
+  echo "Started Xvfb in pid $!"
 else
-  echo "Xvfb ya esta ejecutandose"
+  echo "Xvfb already running"
 fi
