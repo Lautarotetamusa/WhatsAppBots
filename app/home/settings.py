@@ -131,6 +131,9 @@ USE_TZ = True
 
 #Celery
 
+#desactivar las warnings
+CELERY_REDIRECT_STDOUTS_LEVEL = 'INFO'
+
 CELERY_BROKER_URL = "redis://redis:6379"
 CELERY_RESULT_BACKEND = "redis://redis:6379"
 CELERY_TIMEZONE = 'UTC'

@@ -21,6 +21,8 @@ def get(session):
 
     # Ignores any certificate errors if there is any
     chrome_options.add_argument("--ignore-certificate-errors")
+    # Necesario para correrlo como root dentro del container
+    chrome_options.add_argument("--no-sandbox")
 
     if session.proxy != "":
         #host : port : username : password

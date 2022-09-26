@@ -2,20 +2,27 @@ version: "3.7"
 
 services:
   django:
-    build: .
+    build:
+      context: .
+      dockerfile: app/Dockerfile
     container_name: django
     ports:
       - "8000:8000"
     command: >
-       sh -c "python manage.py migrate &&
-              python manage.py runserver 0.0.0.0:8000"
+      sh -c "./start_xvfb.sh
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./app:/app
+    environment:
+      - DISPLAY=:10
 
   celery:
-    build: .
+    build:
+      context: .
+      dockerfile: celery/Dockerfile
     container_name: celery
-    command: celery -A home.celery worker
+    command: celery -A home.celery worker -l ERROR -E
     volumes:
       - ./app:/app
     depends_on:
@@ -23,9 +30,11 @@ services:
       - redis
 
   celery-beat:
-    build: .
+    build:
+      context: .
+      dockerfile: celery/Dockerfile
     container_name: celery-beat
-    command: celery -A home.celery beat -l info
+    command: celery -A home.celery beat -l ERROR
     volumes:
       - ./app:/app
     depends_on:
