@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     command: >
-      sh -c "./start_xvfb.sh
+      sh -c "/bin/sh ./start_xvfb.sh
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     volumes:
