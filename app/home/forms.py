@@ -28,8 +28,8 @@ class BotForm(forms.ModelForm):
         if phone == "":
             self.add_error("phone", "The number cant be empty")
 
-        if Bot.objects.filter(phone=phone).exists():
-            self.add_error("phone", "This number is already register")
+        #if Bot.objects.filter(phone=phone).exists():
+            #self.add_error("phone", "This number is already register")
 
         #Validar que la sintaxis del proxy este bien
         #ip:port:user:pass
@@ -126,7 +126,8 @@ class CampaignForm(forms.ModelForm):
             print(fields)
 
             if "phone" not in headers:
-                self.add_error("posts", "the file must be contain 'phone' header")
+                self.add_error("posts", "the file must be contain 'phone' header\n")
+                self.add_error("posts", "headers: [%s]" % ', '.join(headers))
 
             for field in fields:
                 if field not in headers:

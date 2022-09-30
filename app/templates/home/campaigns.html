@@ -71,9 +71,14 @@
                                                             <h6 class="text-muted"><i class="fas fa-circle text-c-green f-10 m-r-15"></i>Running</h6>
                                                         </td>
                                                         <td>
-                                                          <a href="campaign_detail.html?id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Details</a>
-                                                          <a href="messages.html?campaign_id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Messages</a>
-                                                          <a href="statistics.html?campaign_id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Statistics</a>
+                                                          <div class="input-group-append">
+                                                            <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+                                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(421px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                <a href="campaign_detail.html?id={{campaign.pk}}"     class="dropdown-item">Details</a>
+                                                                <a href="messages.html?campaign_id={{campaign.pk}}"   class="dropdown-item">Messages</a>
+                                                                <a href="statistics.html?campaign_id={{campaign.pk}}" class="dropdown-item">Statistics</a>
+                                                            </div>
+                                                          </div>
                                                         </td>
                                                       </tr>
                                                     {% endif %}
@@ -116,8 +121,13 @@
                                                             <h6 class="text-muted"><i class="fas fa-circle text-c-grey f-10 m-r-15"></i>Pending</h6>
                                                         </td>
                                                         <td>
-                                                          <a href="campaign_detail.html?id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Details</a>
-                                                          <a href="statistics.html?campaign_id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Statistics</a>
+                                                          <div class="input-group-append">
+                                                            <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+                                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(421px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                <a href="campaign_detail.html?id={{campaign.pk}}"     class="dropdown-item">Details</a>
+                                                                <a href="statistics.html?campaign_id={{campaign.pk}}" class="dropdown-item">Statistics</a>
+                                                            </div>
+                                                          </div>
                                                         </td>
                                                       </tr>
                                                     {% endif %}
@@ -160,9 +170,14 @@
                                                             <h6 class="text-muted"><i class="fas fa-circle text-c-red f-10 m-r-15"></i>Finished</h6>
                                                         </td>
                                                         <td>
-                                                          <a href="campaign_detail.html?id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Details</a>
-                                                          <a href="messages.html?campaign_id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Messages</a>
-                                                          <a href="statistics.html?campaign_id={{campaign.pk}}" class="label theme-bg2 text-white f-12">Statistics</a>
+                                                          <div class="input-group-append">
+                                                            <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+                                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(421px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                <a href="campaign_detail.html?id={{campaign.pk}}"     class="dropdown-item">Details</a>
+                                                                <a href="messages.html?campaign_id={{campaign.pk}}"   class="dropdown-item">Messages</a>
+                                                                <a href="statistics.html?campaign_id={{campaign.pk}}" class="dropdown-item">Statistics</a>
+                                                            </div>
+                                                          </div>
                                                         </td>
                                                       </tr>
                                                     {% endif %}

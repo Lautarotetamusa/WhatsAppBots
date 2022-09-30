@@ -1,0 +1,50 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Forms {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- [ Main Content ] start -->
+<div class="pcoded-main-container">
+  <div class="pcoded-wrapper">
+    <div class="pcoded-content">
+      <div class="pcoded-inner-content">
+        <!-- [ breadcrumb ] end -->
+        <div class="main-body">
+          <div class="page-wrapper">
+            <!-- [ Main Content ] start -->
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="card">
+
+                  <div class="card-header">
+                    <h5>Filters</h5>
+                  </div>
+                  <div class="card-body">
+                    <form id="form_day" enctype="multipart/form-data" method="get" action="statistics.html">
+                      <div class="form-group">
+                        <select id="bot_phone" name="bot_phone" class="mb-3 form-control" value=0>
+                          <option value="">All Bots</option>
+                          {% for i in bots %}
+                            <option value="{{i}}">{{i}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <button id="send_form" type="submit" class="btn btn-danger">Close</button>
+                    </form>
+                  </div>
+                </div>
+                <!-- [ Main Content ] end -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- [ Main Content ] end -->
+
+  {% endblock content %}

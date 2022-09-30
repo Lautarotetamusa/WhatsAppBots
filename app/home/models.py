@@ -2,12 +2,35 @@ from django.db import models
 
 from driver import wppdriver
 
+from home import settings
+from shutil import rmtree #Eliminar las carpetas de session
+import datetime
+
 class Bot(models.Model, wppdriver.WhatsAppDriver):
     phone = models.CharField(max_length=15, primary_key=True)
     proxy = models.CharField(max_length=60, blank=True)
     login_at = models.DateTimeField(null=True)
     is_active = models.BooleanField(default=False)
-    #provider =  models.CharField(max_length=15)
+
+    def path(self):
+        return f"{settings.SESSIONS}/{self.phone}"
+
+    def time_left(self):
+        active_days = 14
+        if self.is_active:
+            time_end = self.login_at + datetime.timedelta(days=active_days)
+
+            left = time_end.replace(microsecond=0) - datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
+            return left
+
+    def close_session(self):
+        print("deleting session folder", self.path())
+        try:
+            rmtree(self.path())
+        except FileNotFoundError:
+            print("session is already closed")
+        self.is_active = False
+        self.save()
 
 class Campaign(models.Model):
     RUNNING = 0

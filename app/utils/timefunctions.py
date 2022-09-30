@@ -1,4 +1,6 @@
 from datetime import datetime, date, timedelta
+from home import settings
+import pytz
 
 def parse_time(time):
     #convertimos el objeto time -> datetime con la fecha de hoy

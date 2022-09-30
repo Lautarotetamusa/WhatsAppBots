@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from celery import shared_task
+from celery.utils.log import get_task_logger
 from home.celery import app
 from home import settings
 
@@ -15,6 +16,8 @@ import csv
 
 from driver.wppdriver import NotLogin
 
+#Logs
+logger = get_task_logger(__name__)
 
 #Esta funcion se ejecuta todos los días a las 00:00hs
 #Se encarga de buscar que campañas necesitan ejecucion y llamar
@@ -52,6 +55,9 @@ def manage_campaign():
         #times["start_at"] = parse_time(datetime.now().time().replace(hour=13, minute=28))
         #times["end_at"]   = parse_time(datetime.now().time().replace(hour=13, minute=32))
 
+        times["start_at"] = parse_time(times["start_at"])
+        times["end_at"]   = parse_time(times["end_at"])
+
         task = send_messages.apply_async(
             eta = times["start_at"],
             args = [campaign.pk]
@@ -65,12 +71,14 @@ def manage_campaign():
         campaign.task_id = task.id
         campaign.save()
 
+        print("campaign: ", campaign.pk)
         print("start:", times["start_at"])
         print("end:",   times["end_at"])
         print("task id:", task.id)
 
 #Envia un mensaje desde un bot a un numero y guarda los resultados
 @shared_task
+#send_message(bot, post["phone"], campaign, msg)
 def send_message(bot, reciver, campaign, text, max_tries=2):
 
     print("Sending message to", reciver)
@@ -80,14 +88,14 @@ def send_message(bot, reciver, campaign, text, max_tries=2):
             sender = bot,
             campaign = campaign,
             text = text,
-            reciver = reciver,
-            consume = bot.consumed()
+            reciver = reciver
         )
 
         try:
             bot.send(reciver, text)
             print("Sended successfuly")
             message.error = None
+            message.consume = bot.consumed()
             break
         except NotLogin:
             print("the session", bot.phone, "is closed")
@@ -97,12 +105,11 @@ def send_message(bot, reciver, campaign, text, max_tries=2):
             break
         except Exception as e:
             message.error = e
-            print(e)
+            print("Error sending, retrying", e)
 
-            message.success = (message.error == None)
 
-        message.save()
-    #return message.pk
+    message.success = (message.error == None)
+    message.save()
 
 #Envia todos los mensajes en un dia
 @shared_task
@@ -173,7 +180,7 @@ def send_messages(campaign_pk):
                         print(message["text"])
 
                         response = Response(
-                            sender = message["phone"],
+                            sender = message["number"],
                             reciver= bot,
                             text   = message["text"],
                             campaign = campaign
@@ -181,7 +188,7 @@ def send_messages(campaign_pk):
                         response.save()
 
                         msg = spintax.spin(campaign.response_spintax)
-                        send_message(bot, number, campaign, msg)
+                        send_message(bot, message["number"], campaign, msg)
                         print("++++++++++++++++++++++++++++++++++")
 
             bot.close()
@@ -210,8 +217,8 @@ def terminate_running_campaign():
     else:
         print("No running campaigns")
 
-@shared_task
+@app.task()
 def test_task():
-    print("task running")
+    logger.info("Starting test task")
     time.sleep(60)
-    print("taks end")
+    logger.info("End test task")

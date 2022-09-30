@@ -2,45 +2,50 @@ version: "3.7"
 
 services:
   django:
-    build:
-      context: .
-      dockerfile: app/Dockerfile
+    build: .
     container_name: django
     ports:
       - "8000:8000"
     command: >
-      sh -c "/bin/sh ./start_xvfb.sh
+      sh -c "/bin/sh start_xvfb.sh
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./app:/app
+      - /dev/shm:/dev/shm
     environment:
       - DISPLAY=:10
 
   celery:
-    build:
-      context: .
-      dockerfile: celery/Dockerfile
+    build: .
     container_name: celery
-    command: celery -A home.celery worker -l ERROR -E
+    command: >
+        sh -c "/bin/sh start_xvfb.sh
+               celery -A home.celery worker -l INFO -E"
     volumes:
       - ./app:/app
+      - /dev/shm:/dev/shm
     depends_on:
       - django
       - redis
+    environment:
+      - DISPLAY=:10
 
   celery-beat:
-    build:
-      context: .
-      dockerfile: celery/Dockerfile
+    build: .
     container_name: celery-beat
-    command: celery -A home.celery beat -l ERROR
+    command: >
+        sh -c "/bin/sh start_xvfb.sh
+               celery -A home.celery beat -l INFO"
     volumes:
       - ./app:/app
+      - /dev/shm:/dev/shm
     depends_on:
       - django
       - redis
       - celery
+    environment:
+      - DISPLAY=:10
 
   redis:
     container_name: redis

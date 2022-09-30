@@ -52,57 +52,95 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-sm-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h5>Messages</h5>
-                  </div>
-                  <div class="card-block table-border-style">
-                    <h6 class="mb-4">Total: {{total}}</h6>
-                    <div class="table-responsive">
-                      <table class="table" style="table-layout: fixed; width: 100%">
-                        <thead>
-                          <tr>
-                            <th>Sender</th>
-                            <th>Reciver</th>
-                            <th>Text</th>
-                            <th>Status</th>
-                            <th>Error</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for message in messages %}
-                          <tr>
-                            <td scope="row">
-                              <a class="text-muted" href="statistics.html?bot_phone={{message.sender.phone}}">{{message.sender.phone}}</a>
-                            </td>
-                            <td scope="row">
-                              <a class="text-muted" href="https://web.whatsapp.com/send/?phone={{message.reciver}}&text=test&app_absent=0">{{message.reciver}}</a>
-                            </td>
-                            <td style="word-wrap: break-all; white-space: normal">
-                              <a href="#!" data-toggle="collapse" data-target="#{{message.pk}}" aria-expanded="false">Click to view</a>
-                              <div id="{{message.pk}}" class="collapse" style="">
-                                {{message.text}}
-                              </div>
-                            </td>
-                            {% if message.success == True %}
-                            <td>
-                              <h6 class="text-muted"><i class="fas fa-circle text-c-green f-10 m-r-15"></i>Sended</h6>
-                            </td>
-                            <td></td>
-                            {% else %}
-                            <td>
-                              <h6 class="text-muted"><i class="fas fa-circle text-c-red f-10 m-r-15"></i>Error</h6>
-                            </td>
-                            <td>{{message.error}}</td>
-                            {% endif %}
-                          </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
+              <div class="col-xl col-md-12 m-b-30">
+                  <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      <li class="nav-item">
+                          <a class="nav-link active show" id="home-tab" data-toggle="tab" href="#messages" role="tab"
+                              aria-controls="home" aria-selected="true">Messages</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" id="profile-tab" data-toggle="tab"
+                              href="#responses" role="tab" aria-controls="profile" aria-selected="false">Responses</a>
+                      </li>
+                  </ul>
+                  <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade active show" id="messages" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="table-responsive">
+                          <table class="table" style="table-layout: fixed; width: 100%">
+                            <thead>
+                              <tr>
+                                <th>Sender</th>
+                                <th>Reciver</th>
+                                <th>Text</th>
+                                <th>Status</th>
+                                <th>Error</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for message in messages %}
+                              <tr>
+                                <td scope="row">
+                                  <a class="text-muted" href="statistics.html?bot_phone={{message.sender.phone}}">{{message.sender.phone}}</a>
+                                </td>
+                                <td scope="row">
+                                  <a class="text-muted" href="conversations.html?client={{message.reciver}}">{{message.reciver}}</a>
+                                </td>
+                                <td style="word-wrap: break-all; white-space: normal">
+                                  <a href="#!" data-toggle="collapse" data-target="#{{message.pk}}" aria-expanded="false">Click to view</a>
+                                  <div id="{{message.pk}}" class="collapse" style="">
+                                    {{message.text}}
+                                  </div>
+                                </td>
+                                {% if message.success == True %}
+                                <td>
+                                  <h6 class="text-muted"><i class="fas fa-circle text-c-green f-10 m-r-15"></i>Sended</h6>
+                                </td>
+                                <td></td>
+                                {% else %}
+                                <td>
+                                  <h6 class="text-muted"><i class="fas fa-circle text-c-red f-10 m-r-15"></i>Error</h6>
+                                </td>
+                                <td>{{message.error}}</td>
+                                {% endif %}
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="responses" role="tabpanel" aria-labelledby="home-tab">
+                      <div class="table-responsive">
+                        <table class="table" style="table-layout: fixed; width: 100%">
+                          <thead>
+                            <tr>
+                              <th>Sender</th>
+                              <th>Reciver</th>
+                              <th>Text</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for response in responses %}
+                            <tr>
+                              <td scope="row">
+                                <a class="text-muted" href="conversations.html?client={{response.sender}}">{{response.sender}}</a>
+                              </td>
+                              <td scope="row">
+                                <a class="text-muted" href="statistics.html?bot_phone={{response.reciver.phone}}">{{response.reciver.phone}}</a>
+                              </td>
+                              <td style="word-wrap: break-all; white-space: normal">
+                                <a href="#!" data-toggle="collapse" data-target="#{{response.pk}}" aria-expanded="false">Click to view</a>
+                                <div id="{{response.pk}}" class="collapse" style="">
+                                  {{response.text}}
+                                </div>
+                              </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
-                </div>
               </div>
             </div>
           </div>

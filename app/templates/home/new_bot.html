@@ -45,9 +45,9 @@
                                                         <div class="form-group">
                                                           <label for="{{field.name}}">{{field.label}}</label>
                                                           {{ field }}
-                                                          {% if field.errors %}
-                                                            <small class="form-text" style="color:var(--danger)">{{ field.errors.as_text }}</small>
-                                                          {% endif %}
+                                                          {% for error in field.errors %}
+                                                            <small class="form-text" style="color:var(--danger)">{{ error }}</small>
+                                                          {% endfor %}
                                                         </div>
                                                     {%endfor%}
 

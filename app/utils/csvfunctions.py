@@ -15,10 +15,10 @@ def json2csv(filepath):
         for post in posts:
             csv_writer.writerow(post["_airbyte_data"].values())
 
-def parse_phones(filepath):
+def parse_phones(file):
 
     #Remove duplicateds
-    with open(filepath, "r") as infile:
+    with open(file.path, "r") as infile:
         posts  = csv.DictReader(infile)
         headers = next(posts).keys()
 
@@ -28,7 +28,7 @@ def parse_phones(filepath):
                     res.append(post)
 
     #Parse phones
-    outpath = filepath.replace('.csv', '_parse.csv')
+    outpath = file.path.replace('.csv', '_parse.csv')
     with open(outpath, "w") as outfile:
         outcsv = csv.writer(outfile)
         outcsv.writerow(headers)
@@ -41,7 +41,7 @@ def parse_phones(filepath):
                 outcsv.writerow(post.values())
             except Exception as e:
                 print("Wrong", post["phone"])
-    return outpath
+    return file.name.replace('.csv', '_parse.csv')
 
 def remove_duplicateds(filepath):
     with open(filepath) as infile:

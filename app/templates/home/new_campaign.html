@@ -35,9 +35,9 @@
                                                         <div class="form-group">
                                                           {{ field.label_tag }}
                                                           {{ field }}
-                                                          {% if field.errors %}
-                                                            <small class="form-text" style="color:var(--danger)">{{ field.errors.as_text }}</small>
-                                                          {% endif %}
+                                                          {% for error in field.errors %}
+                                                            <small class="form-text" style="color:var(--danger)">{{ error }}</small>
+                                                          {% endfor %}
 
                                                           {% if field.field.widget.attrs.class == "custom-range" %}
                                                             <small class="form-text muted-text"></small>
@@ -66,6 +66,12 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
+
+{% if message %}
+<script type="text/javascript">
+  alert("{{message}}")
+</script>
+{% endif %}
 
 <script type="text/javascript">
   $("input").on("input", function(){

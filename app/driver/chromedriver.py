@@ -1,44 +1,35 @@
-import os
 import zipfile
-from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 def get(session):
-    #Get the current path to save files here
-    dir = str(Path( __file__ ).parent.absolute())
+    print(session.path())
 
-    chrome_options = Options()
+    options = Options()
 
     #Capabilities, sirve para poder ver el consumo
-    chrome_options.set_capability('loggingPrefs', {'performance' : 'INFO'})
-    chrome_options.set_capability('goog:loggingPrefs', { 'performance':'ALL' })
+    options.set_capability('loggingPrefs', {'performance' : 'INFO'})
+    options.set_capability('goog:loggingPrefs', { 'performance':'ALL' })
 
-    #Session
-    chrome_options.add_argument(f'--user-data-dir={dir}/sessions/{session.phone}')
-    print(f'--user-data-dir={dir}/sessions/{session.phone}')
-
-    # Ignores any certificate errors if there is any
-    chrome_options.add_argument("--ignore-certificate-errors")
-    # Necesario para correrlo como root dentro del container
-    chrome_options.add_argument("--no-sandbox")
+    options.add_argument(f"--user-data-dir={session.path()}") #Session
+    options.add_argument("--ignore-certificate-errors") #Ignores any certificate errors if there is any
+    options.add_argument("--no-sandbox") # Necesario para correrlo como root dentro del container
 
     if session.proxy != "":
         #host : port : username : password
         proxy_vars = session.proxy.split(':')
         background = background_js % tuple(proxy_vars)
 
-        pluginfile = dir+'/proxy_auth_plugin.zip'
+        pluginfile = session.path()+'/proxy_auth_plugin.zip'
 
         with zipfile.ZipFile(pluginfile, 'w') as zp:
             zp.writestr("manifest.json", manifest_json)
             zp.writestr("background.js", background)
-        chrome_options.add_extension(pluginfile)
+        options.add_extension(pluginfile)
     else:
         print("no proxy config")
 
-    driver = webdriver.Chrome(options=chrome_options)
+    driver = webdriver.Chrome(options=options)
     return driver
 
 manifest_json = """

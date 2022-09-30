@@ -15,4 +15,4 @@ celery.logs
 celerybeat-schedule
 
 #Driver zip file
-driver/proxy_auth_plugin.zip
+**/proxy_auth_plugin.zip

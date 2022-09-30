@@ -4,18 +4,20 @@ import os
 
 from celery import Celery, shared_task
 from celery.schedules import crontab
-#from home import tasks
+
+from utils.timefunctions import parse_time
+from datetime import time
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "home.settings")
 
 app = Celery("home")
 
-#Ejecutar una task cada cierto tiempo
 app.conf.beat_schedule = {
-      'manage_campaigns': {
-        'task': 'home.tasks.test_task',
-        'schedule': crontab(minute="*/1"),
-        'args': ()
+#Task que se ejecuta todos los dias a las 00:00hs en LOCAL_TIME_ZONE
+  'manage_campaigns': {
+    'task': 'home.tasks.manage_campaign',
+    'schedule': crontab(0, parse_time(time(0,0)).hour),
+    'args': ()
     },
 }
 

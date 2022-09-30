@@ -2,8 +2,9 @@ from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import render
 from django import template
+from django.contrib import messages
 
-from home.models import Bot, Campaign, Message
+from home.models import Bot, Campaign, Message, Response
 from home.forms  import CampaignForm, BotForm
 from utils import csvfunctions
 from home import settings
@@ -27,83 +28,78 @@ def default(request):
     except:
         return render(request, 'home/page-500.html')
 
-#bots list
 def index(request):
-    bot_list = Bot.objects.all()
-
-    #Calcular el tiempo que queda hasta que se cierren las sesiones
-    for bot in bot_list:
-        if bot.is_active:
-            time_end = bot.login_at + datetime.timedelta(days=14)
-
-            bot.time_left = time_end - datetime.datetime.now(datetime.timezone.utc) # as timedelta
-
-    return render(request, "home/index.html", {'bot_list': bot_list})
-
-#campaign list
+    return render(request, "home/index.html", {'bot_list': Bot.objects.all()})
 def campaigns(request):
-    campaigns = Campaign.objects.all()
-    return render(request, "home/campaigns.html", {"campaigns": campaigns})
+    return render(request, "home/campaigns.html", {"campaigns": Campaign.objects.all()})
 
-def statistics(request):
-    messages = Message.objects.all()
+def filter_request(request):
+    messages  = Message.objects.all()
+    responses = Response.objects.all()
+    template = request.path.split('/')[-1]
 
-    if request.GET:
-        if "campaign_id" in request.GET:
-            id = request.GET["campaign_id"]
-            if id != "": #Si el id es 0 estamos seleccionando todas las campañas
-                messages = messages.filter(campaign=id)
+    if "campaign_id" in request.GET:
+        id = request.GET["campaign_id"]
+        if id != "": #Si el id es 0 estamos seleccionando todas las campañas
+            messages  = messages.filter(campaign=id)
+            responses = responses.filter(campaign=id)
 
-        if "bot_phone" in request.GET:
-            bot_phone = request.GET["bot_phone"]
-            if bot_phone != "":            #Si el phone es 0 estamos seleccionando todas los bots
-                messages = messages.filter(sender=bot_phone)
+    if "bot_phone" in request.GET:
+        bot_phone = request.GET["bot_phone"]
+        if bot_phone != "":            #Si el phone es 0 estamos seleccionando todas los bots
+            messages  = messages.filter(sender=bot_phone)
+            responses = responses.filter(reciver=bot_phone)
 
-        if "date_input" in request.GET and request.GET["date_input"] != "":
-            date = datetime.datetime.strptime(request.GET["date_input"], "%Y-%m-%d")
-            messages = messages.filter(sended_at__day = date.day)
-
-    chart = [
-        {"label": "errors", "value": messages.filter(success=False).count()},
-        {"label": "success","value": messages.filter(success=True).count()}
-    ]
+    if "date_input" in request.GET and request.GET["date_input"] != "":
+        date = datetime.datetime.strptime(request.GET["date_input"], "%Y-%m-%d")
+        messages  = messages.filter(sended_at__day=date.day)
+        responses = responses.filter(sended_at__day=date.day)
 
     context = {
-        "data": chart,
         "form": request.GET,
         "campaigns": Campaign.objects.all().values_list("pk", flat=True),
         "bots": Bot.objects.all().values_list("phone", flat=True)
     }
-    return render(request, "home/statistics.html", context)
 
-def messages(request):
-    messages = Message.objects.all()
+    if "statistics" in template:
+        context["charts"] = {
+            "error": {
+                "labels": ["errors", "success"],
+                "values": [messages.filter(success=False).count(), messages.filter(success=True).count()]
+            },
+            "response": {
+                "labels": ["not responded", "responded"],
+                "values": [messages.count()-responses.count(), responses.count()]
+            }
+        }
+    elif "message" in template:
+        context["messages"]  = messages
+        context["responses"] = responses
+    elif "conversation" in template:
+        if "client" in request.GET:
+            client = request.GET["client"]
+            messages   = messages.filter(reciver=client)
+            responses  = responses.filter(sender=client)
 
-    if request.GET:
-        if "campaign_id" in request.GET:
-            id = request.GET["campaign_id"]
-            if id != "": #Si el id es 0 estamos seleccionando todas las campañas
-                messages = messages.filter(campaign=id)
+            r = 0
+            conversation = []
+            for m in range(len(messages)):
+                res = None
+                if r in range(len(responses)):
+                    res = responses[r].text
+                conversation.append({
+                    "msg": messages[m].text,
+                    "res": res
+                })
+                r += 1
 
-        if "bot_phone" in request.GET:
-            bot_phone = request.GET["bot_phone"]
-            if bot_phone != "":            #Si el phone es 0 estamos seleccionando todas los bots
-                messages = messages.filter(sender=bot_phone)
+            context["conversation"] = conversation
 
-        if "date_input" in request.GET and request.GET["date_input"] != "":
-            date = datetime.datetime.strptime(request.GET["date_input"], "%Y-%m-%d")
-            messages = messages.filter(sended_at__day = date.day)
-
-    context = {
-        "messages": messages,
-        "total": messages.count(),
-        "form": request.GET,
-        "campaigns": Campaign.objects.all().values_list("pk", flat=True),
-        "bots": Bot.objects.all().values_list("phone", flat=True),
-    }
-    return render(request, "home/messages.html", context)
+    return render(request, "home/"+template, context)
 
 def new_campaign(request):
+
+    message = None
     if request.method == 'POST':
         form_data = request.POST
 
@@ -126,18 +122,18 @@ def new_campaign(request):
             campaign.save()
 
             #Lo guardamos antes porque sino el archivo no se sube
-            campaign.posts = csvfunctions.parse_phones(campaign.posts.path)
+            campaign.posts = csvfunctions.parse_phones(campaign.posts)
             campaign.save()
+
+            message = "Campaign created successfuly"
         else:
             for field in form.errors:
                 form[field].field.widget.attrs['style'] = 'border: 1px solid var(--danger);'
             print("form invalid")
-
     else:
         form = CampaignForm()
 
-    return render(request, 'home/new_campaign.html', {"form": form})
-
+    return render(request, 'home/new_campaign.html', {"form": form, "message":message})
 def new_bot(request):
 
     has_error = ""
@@ -162,6 +158,15 @@ def new_bot(request):
 
     return render(request, 'home/new_bot.html', {"form": form, "errors": has_error})
 
+#####
+def close_bot(request):
+    if "bot_phone" in request.GET:
+        bot = Bot.objects.get(phone=request.GET["bot_phone"])
+        if bot:
+            bot.close_session()
+            return render(request, "home/bot_detail.html", {"find":True, "bot":bot})
+
+    return render(request, "home/bot_detail.html", {"find":False})
 def bot_detail(request):
     #Find the requested phone
     find = Bot.objects.filter(phone=request.GET["phone"])

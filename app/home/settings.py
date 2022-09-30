@@ -12,7 +12,9 @@ CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 #
 
-#
+SESSIONS = os.path.join(BASE_DIR, "driver/sessions")
+
+#Posts
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = "/media/"
 

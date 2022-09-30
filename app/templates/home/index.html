@@ -53,7 +53,7 @@
                                                         <td>
                                                             <h6 class="m-0"><img class="rounded-circle m-r-10"
                                                                                     style="width:40px;"
-                                                                                    src="{{ ASSETS_ROOT }}/images/user/avatar-2.jpg"
+                                                                                    src="{{ ASSETS_ROOT }}/images/avatar-2.jpg"
                                                                                     ></h6>
                                                         </td>
                                                         <td>
@@ -68,8 +68,14 @@
                                                                     class="fas fa-circle text-c-green f-10 m-r-15"></i>{{bot.time_left}}</h6>
                                                         </td>
                                                         <td>
-                                                          <a href="statistics.html?bot_phone={{bot.phone}}" class="label theme-bg2 text-white f-12">Statistics</a>
-                                                          <a href="messages.html?bot_phone={{bot.phone}}" class="label theme-bg2 text-white f-12">Messages</a>
+                                                          <div class="input-group-append">
+                                                            <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+                                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(421px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                <a href="statistics.html?bot_phone={{bot.phone}}" class="dropdown-item">Statistics</a>
+                                                                <a href="messages.html?bot_phone={{bot.phone}}"   class="dropdown-item">Messages</a>
+                                                                <a href="close_bot.html?bot_phone={{bot.phone}}"  class="dropdown-item">Close</a>
+                                                            </div>
+                                                          </div>
                                                         </td>
                                                       </tr>
                                                     {% endif %}
@@ -86,7 +92,7 @@
                                                         <th></th>
                                                         <th>Phone</th>
                                                         <th>Proxy</th>
-                                                        <th></th>
+                                                        <th>Closed at</th>
                                                         <th class="text-right"></th>
                                                     </tr>
                                                     </thead>
@@ -98,7 +104,7 @@
                                                             <td>
                                                                 <h6 class="m-0"><img class="rounded-circle m-r-10"
                                                                                         style="width:40px;"
-                                                                                        src="{{ ASSETS_ROOT }}/images/user/avatar-2.jpg"
+                                                                                        src="{{ ASSETS_ROOT }}/images/avatar-2.jpg"
                                                                                         ></h6>
                                                             </td>
                                                             <td>
@@ -114,9 +120,14 @@
                                                                     10:35</h6>
                                                             </td>
                                                             <td>
-                                                              <a href="statistics.html?bot_phone={{bot.phone}}" class="label theme-bg2 text-white f-12">Statistics</a>
-                                                              <a href="messages.html?bot_phone={{bot.phone}}" class="label theme-bg2 text-white f-12">Messages</a>
-                                                              <a href="new_bot.html?bot_phone={{bot.phone}}" class="label theme-bg text-white f-12">Active</a>
+                                                              <div class="input-group-append">
+                                                                <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+                                                                <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(421px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                    <a href="statistics.html?bot_phone={{bot.phone}}" class="dropdown-item">Statistics</a>
+                                                                    <a href="messages.html?bot_phone={{bot.phone}}"   class="dropdown-item">Messages</a>
+                                                                    <a href="new_bot.html?bot_phone={{bot.phone}}"    class="dropdown-item">Active</a>
+                                                                </div>
+                                                              </div>
                                                             </td>
                                                         {% endif %}
                                                       {% endfor %}

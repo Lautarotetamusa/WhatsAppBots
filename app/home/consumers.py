@@ -18,10 +18,18 @@ class CreateBotConsumer(JsonWebsocketConsumer):
         if content["status"] == "start":
             print("phone", content["phone"])
             print("proxy", content["proxy"])
-            bot = Bot(
-                phone = content["phone"],
-                proxy = content["proxy"]
-            )
+
+
+            bot = Bot.objects.get(phone=content["phone"])
+            #Si no existe, creamos uno nuevo
+            if not bot:
+                print("bot not registered, creating new")
+                bot = Bot(
+                    phone = content["phone"],
+                    proxy = content["proxy"]
+                )
+            else:
+                print("bot already registered, revalidating")
 
             try:
                 bot.open()
