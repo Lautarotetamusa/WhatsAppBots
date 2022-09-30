@@ -8,7 +8,7 @@ from celery.schedules import crontab
 from utils.timefunctions import parse_time
 from datetime import time
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "home.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 
 app = Celery("home")
 

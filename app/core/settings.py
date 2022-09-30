@@ -33,6 +33,7 @@ DAYS_ACTIVE = 14
 # Application definition
 INSTALLED_APPS = [
     'home',
+    'core',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,7 +49,7 @@ INSTALLED_APPS = [
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 #configuracion de Channels
-ASGI_APPLICATION = "home.asgi.application"
+ASGI_APPLICATION = "core.asgi.application"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -60,7 +61,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'home.urls'
+ROOT_URLCONF = 'core.urls'
 
 ASSETS_ROOT = os.getenv('ASSETS_ROOT', '/static/assets')
 
@@ -84,7 +85,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'home.wsgi.application'
+WSGI_APPLICATION = 'core.wsgi.application'
 
 
 # Database

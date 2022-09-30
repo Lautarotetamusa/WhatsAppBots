@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from home.celery import app
-from home import settings
+from core import settings
 
 from home.models import Campaign, Bot, Message, Response
 from utils.timefunctions import parse_time
