@@ -1,0 +1,79 @@
+<h1>{{name}}</h1>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th></th>
+      {% for label in labels %}
+      <th>{{label}}</th>
+      {% endfor %}
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for bot in bot_list %}
+      {% if bot.is_active and tab == "active"%}
+        <tr>
+          <td>
+            <h6 class="m-0">
+              <img class="rounded-circle m-r-10" style="width:40px;" src="{{ ASSETS_ROOT }}/images/avatar-2.jpg">
+            </h6>
+          </td>
+          <td>
+            <h6 class="m-0">{{bot.phone}}</h6>
+          </td>
+          <td>
+            <h6 class="m-0">{{bot.proxy}}</h6>
+            <p>provider.com</p>
+          </td>
+          <td>
+            <h6 class="text-muted"><i
+              class="fas fa-circle text-c-green f-10 m-r-15"></i>{{bot.time_left}}</h6>
+            </td>
+            <td>
+              <div class="input-group-append">
+                <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+                <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(421px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+                  <a href="statistics.html?bot_phone={{bot.phone}}" class="dropdown-item">Statistics</a>
+                  <a href="messages.html?bot_phone={{bot.phone}}"   class="dropdown-item">Messages</a>
+                  <a href="close_bot.html?bot_phone={{bot.phone}}"  class="dropdown-item">Close</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        {% endif %}
+        {% if tab == "closed" and not bot.is_active%}
+          <tr>
+            <td>
+              <h6 class="m-0">
+                <img class="rounded-circle m-r-10" style="width:40px;" src="{{ ASSETS_ROOT }}/images/avatar-2.jpg">
+              </h6>
+            </td>
+            <td>
+              <h6 class="m-0">{{bot.phone}}</h6>
+            </td>
+            <td>
+              <h6 class="m-0">{{bot.proxy}}</h6>
+              <p>provider.com</p>
+            </td>
+            <td>
+              <h6 class="text-muted">
+                <i class="fas fa-circle text-c-red f-10 m-r-15"></i>
+                11 MAY 10:35
+              </h6>
+            </td>
+            <td>
+              <div class="input-group-append">
+                <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+                <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(421px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+                  <a href="statistics.html?bot_phone={{bot.phone}}" class="dropdown-item">Statistics</a>
+                  <a href="messages.html?bot_phone={{bot.phone}}"   class="dropdown-item">Messages</a>
+                  <a href="new_bot.html?bot_phone={{bot.phone}}"    class="dropdown-item">Active</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>

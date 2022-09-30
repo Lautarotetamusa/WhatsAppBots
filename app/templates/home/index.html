@@ -25,126 +25,33 @@
                                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                                         <li class="nav-item">
                                             <a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                                                aria-controls="home" aria-selected="false">Active</a>
+                                                aria-controls="home" aria-selected="false">Active
+                                            </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link " id="profile-tab" data-toggle="tab"
-                                                href="#profile" role="tab" aria-controls="profile" aria-selected="true">Closed</a>
+                                            <a class="nav-link" id="profile-tab" data-toggle="tab"
+                                                href="#profile" role="tab" aria-controls="profile" aria-selected="true">Closed
+                                            </a>
                                         </li>
                                     </ul>
-                                    <div class="tab-content" id="myTabContent">
+                                    <div class="tab-content">
                                         <div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Phone</th>
-                                                    <th>Proxy</th>
-                                                    <th>Time left</th>
-                                                    <th></th>
-                                                    <th class="text-right"></th>
-                                                </tr>
-                                                </thead>
-
-                                                <tbody>
-                                                  {% for bot in bot_list %}
-                                                    {% if bot.is_active %}
-                                                      <tr>
-                                                        <td>
-                                                            <h6 class="m-0"><img class="rounded-circle m-r-10"
-                                                                                    style="width:40px;"
-                                                                                    src="{{ ASSETS_ROOT }}/images/avatar-2.jpg"
-                                                                                    ></h6>
-                                                        </td>
-                                                        <td>
-                                                            <h6 class="m-0">{{bot.phone}}</h6>
-                                                        </td>
-                                                        <td>
-                                                            <h6 class="m-0">{{bot.proxy}}</h6>
-                                                            <p>provider.com</p>
-                                                        </td>
-                                                        <td>
-                                                            <h6 class="text-muted"><i
-                                                                    class="fas fa-circle text-c-green f-10 m-r-15"></i>{{bot.time_left}}</h6>
-                                                        </td>
-                                                        <td>
-                                                          <div class="input-group-append">
-                                                            <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
-                                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(421px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                                <a href="statistics.html?bot_phone={{bot.phone}}" class="dropdown-item">Statistics</a>
-                                                                <a href="messages.html?bot_phone={{bot.phone}}"   class="dropdown-item">Messages</a>
-                                                                <a href="close_bot.html?bot_phone={{bot.phone}}"  class="dropdown-item">Close</a>
-                                                            </div>
-                                                          </div>
-                                                        </td>
-                                                      </tr>
-                                                    {% endif %}
-                                                  {% endfor %}
-                                                </tbody>
-                                            </table>
-
+                                          {% with "Phone Proxy Time_left" as list%}
+                                            {% include "includes/table.html" with labels=list.split tab="active"%}
+                                          {% endwith %}
                                         </div>
-                                        <div class="tab-pane fade" id="profile" role="tabpanel"
-                                                aria-labelledby="profile-tab">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                    <tr>
-                                                        <th></th>
-                                                        <th>Phone</th>
-                                                        <th>Proxy</th>
-                                                        <th>Closed at</th>
-                                                        <th class="text-right"></th>
-                                                    </tr>
-                                                    </thead>
-
-                                                    <tbody>
-                                                      {% for bot in bot_list %}
-                                                        {% if not bot.is_active %}
-                                                          <tr>
-                                                            <td>
-                                                                <h6 class="m-0"><img class="rounded-circle m-r-10"
-                                                                                        style="width:40px;"
-                                                                                        src="{{ ASSETS_ROOT }}/images/avatar-2.jpg"
-                                                                                        ></h6>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="m-0">{{bot.phone}}</h6>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="m-0">{{bot.proxy}}</h6>
-                                                                <p>provider.com</p>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="text-muted"><i
-                                                                        class="fas fa-circle text-c-red f-10 m-r-15"></i>11 MAY
-                                                                    10:35</h6>
-                                                            </td>
-                                                            <td>
-                                                              <div class="input-group-append">
-                                                                <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
-                                                                <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(421px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                                    <a href="statistics.html?bot_phone={{bot.phone}}" class="dropdown-item">Statistics</a>
-                                                                    <a href="messages.html?bot_phone={{bot.phone}}"   class="dropdown-item">Messages</a>
-                                                                    <a href="new_bot.html?bot_phone={{bot.phone}}"    class="dropdown-item">Active</a>
-                                                                </div>
-                                                              </div>
-                                                            </td>
-                                                        {% endif %}
-                                                      {% endfor %}
-                                                    </tbody>
-                                                </table>
-
+                                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                          {% with "Phone Proxy Closed_at" as list%}
+                                            {% include "includes/table.html" with labels=list.split tab="closed"%}
+                                          {% endwith %}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- [ Main Content ] end -->
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
     <!-- [ Main Content ] end -->

@@ -10,7 +10,7 @@ from datetime import time
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 
-app = Celery("home")
+app = Celery("celery")
 
 app.conf.beat_schedule = {
 #Task que se ejecuta todos los dias a las 00:00hs en LOCAL_TIME_ZONE

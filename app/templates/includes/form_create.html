@@ -1,0 +1,23 @@
+<div class="col-md-6">
+  <h5 class="mt-1">{{title}}</h5>
+  <hr>
+  <form enctype="multipart/form-data" class="" action={{action}} method="post">
+    {% csrf_token %}
+
+    {% for field in form %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {{ field }}
+          {% for error in field.errors %}
+            <small class="form-text" style="color:var(--danger)">{{ error }}</small>
+          {% endfor %}
+
+          {% if field.field.widget.attrs.class == "custom-range" %}
+            <small class="form-text muted-text"></small>
+          {% endif %}
+        </div>
+    {%endfor%}
+
+    <button id="send_form" type="submit" class="btn btn-primary">Create</button>
+  </form>
+</div>

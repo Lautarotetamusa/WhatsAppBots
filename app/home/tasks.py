@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
-from home.celery import app
+from core.celery import app
 from core import settings
 
 from home.models import Campaign, Bot, Message, Response
@@ -210,7 +210,7 @@ def end_task(task_id):
     app.control.revoke(task_id, terminate=True)
 
 @shared_task
-def terminate_running_campaign():
+def end_running_campaign():
     campaign = Campaign.objects.filter(status=Campaign.RUNNING)
     if campaign:
         app.control.revoke(campaign[0].task_id, terminate=True)
