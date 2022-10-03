@@ -16,25 +16,28 @@
         <div class="main-body">
           <div class="page-wrapper">
             <!-- [ Main Content ] start -->
-            {% include "includes/filters.html" %}
+            {% include "includes/filters.html" with action="conversations.html"%}
             <div>
-              <div class="card">
-                <div class="card-header">
-                  <h5>Conversation with {{request.GET.client}}</h5>
+              {% for conver in conversations%}
+                <div class="card">
+                  <div class="card-header">
+                    <h5>Conversation with {{conver.client}}</h5>
+                  </div>
+                  <div class="card-body">
+                    {% for message in conver.message_set.all %}
+                      {% if message.type == message.SENDED%}
+                        <blockquote class="blockquote text-right">
+                          <p class="mb-2">{{message.text}}</p>
+                        </blockquote>
+                      {% elif message.type == message.RECIVED%}
+                        <blockquote class="blockquote">
+                          <p class="mb-2">{{message.text}}</p>
+                        </blockquote>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
                 </div>
-                <div class="card-body">
-                  {% for message in conversation %}
-                  <blockquote class="blockquote text-right">
-                    <p class="mb-2">{{message.msg}}</p>
-                  </blockquote>
-                  {% if message.res%}
-                  <blockquote class="blockquote">
-                    <p class="mb-2">{{message.res}}</p>
-                  </blockquote>
-                  {% endif %}
-                  {% endfor %}
-                </div>
-              </div>
+              {% endfor%}
             </div>
           </div>
         </div>

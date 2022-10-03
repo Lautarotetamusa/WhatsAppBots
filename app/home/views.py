@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django import template
 from django.contrib import messages
 
-from home.models import Bot, Campaign, Message, Response
+from home.models import Bot, Campaign, Message, Conversation
 from home.forms  import CampaignForm, BotForm
 from utils import csvfunctions
 from core import settings
@@ -34,26 +34,22 @@ def campaigns(request):
     return render(request, "home/campaigns.html", {"campaigns": Campaign.objects.all()})
 
 def filter_request(request):
-    messages  = Message.objects.all()
-    responses = Response.objects.all()
+    conver  = Conversation.objects.all()
     template = request.path.split('/')[-1]
 
     if "campaign_id" in request.GET:
         id = request.GET["campaign_id"]
         if id != "": #Si el id es 0 estamos seleccionando todas las campañas
-            messages  = messages.filter(campaign=id)
-            responses = responses.filter(campaign=id)
+            conver  = conver.filter(campaign=id)
 
     if "bot_phone" in request.GET:
         bot_phone = request.GET["bot_phone"]
         if bot_phone != "":            #Si el phone es 0 estamos seleccionando todas los bots
-            messages  = messages.filter(sender=bot_phone)
-            responses = responses.filter(reciver=bot_phone)
+            conver  = conver.filter(bot=bot_phone)
 
     if "date_input" in request.GET and request.GET["date_input"] != "":
         date = datetime.datetime.strptime(request.GET["date_input"], "%Y-%m-%d")
-        messages  = messages.filter(sended_at__day=date.day)
-        responses = responses.filter(sended_at__day=date.day)
+        conver  = conver.filter(start__day=date.day)
 
     context = {
         "form": request.GET,
@@ -62,38 +58,32 @@ def filter_request(request):
     }
 
     if "statistics" in template:
+        sended  = Message.objects.filter(conversation__in=conver, type=Message.SENDED)
+        recived = Message.objects.filter(conversation__in=conver, type=Message.RECIVED)
         context["charts"] = {
             "error": {
                 "labels": ["errors", "success"],
-                "values": [messages.filter(success=False).count(), messages.filter(success=True).count()]
+                "values": [
+                    sended.exclude(error=None).count(),
+                    sended.filter(error=None).count()
+                ]
             },
             "response": {
                 "labels": ["not responded", "responded"],
-                "values": [messages.count()-responses.count(), responses.count()]
+                "values": [
+                    sended.count()-recived.count(),
+                    recived.count()
+                ]
             }
         }
     elif "message" in template:
-        context["messages"]  = messages
-        context["responses"] = responses
+        sended  = Message.objects.filter(conversation__in=conver, type=Message.SENDED)
+        recived = Message.objects.filter(conversation__in=conver, type=Message.RECIVED)
+        
+        context["messages"]  = sended
+        context["responses"] = recived
     elif "conversation" in template:
-        if "client" in request.GET:
-            client = request.GET["client"]
-            messages   = messages.filter(reciver=client)
-            responses  = responses.filter(sender=client)
-
-            r = 0
-            conversation = []
-            for m in range(len(messages)):
-                res = None
-                if r in range(len(responses)):
-                    res = responses[r].text
-                conversation.append({
-                    "msg": messages[m].text,
-                    "res": res
-                })
-                r += 1
-
-            context["conversation"] = conversation
+        context["conversations"] = conver
 
     return render(request, "home/"+template, context)
 

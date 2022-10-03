@@ -16,7 +16,7 @@
         <div class="main-body">
           <div class="page-wrapper">
             <!-- [ Main Content ] start -->
-            {% include "includes/filters.html" %}
+            {% include "includes/filters.html" with action="messages.html" %}
             <div class="row">
               <div class="col-xl col-md-12 m-b-30">
                   <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -46,10 +46,10 @@
                               {% for message in messages %}
                               <tr>
                                 <td scope="row">
-                                  <a class="text-muted" href="statistics.html?bot_phone={{message.sender.phone}}">{{message.sender.phone}}</a>
+                                  <a class="text-muted" href="statistics.html?bot_phone={{message.sender.phone}}">{{message.conversation.bot.phone}}</a>
                                 </td>
                                 <td scope="row">
-                                  <a class="text-muted" href="conversations.html?client={{message.reciver}}">{{message.reciver}}</a>
+                                  <a class="text-muted" href="conversations.html?conver_pk={{message.conversation.pk}}">{{message.conversation.client}}</a>
                                 </td>
                                 <td style="word-wrap: break-all; white-space: normal">
                                   <a href="#!" data-toggle="collapse" data-target="#{{message.pk}}" aria-expanded="false">Click to view</a>
@@ -74,7 +74,6 @@
                           </table>
                         </div>
                     </div>
-
                     <div class="tab-pane" id="responses" role="tabpanel" aria-labelledby="home-tab">
                       <div class="table-responsive">
                         <table class="table" style="table-layout: fixed; width: 100%">
@@ -89,10 +88,10 @@
                             {% for response in responses %}
                             <tr>
                               <td scope="row">
-                                <a class="text-muted" href="conversations.html?client={{response.sender}}">{{response.sender}}</a>
+                                <a class="text-muted" href="conversations.html?client={{response.sender}}">{{response.conversation.client}}</a>
                               </td>
                               <td scope="row">
-                                <a class="text-muted" href="statistics.html?bot_phone={{response.reciver.phone}}">{{response.reciver.phone}}</a>
+                                <a class="text-muted" href="statistics.html?bot_phone={{response.conversation.pk}}">{{response.conversation.bot.phone}}</a>
                               </td>
                               <td style="word-wrap: break-all; white-space: normal">
                                 <a href="#!" data-toggle="collapse" data-target="#{{response.pk}}" aria-expanded="false">Click to view</a>
@@ -122,9 +121,6 @@
   {% block javascripts %}
   <script>
 
-    /*$("#date-input").on("change", function(){
-    $("#form_day").submit()
-  });*/
   if ("{{form.campaign_id}}" != ""){
     $("#campaign_id option[value={{form.campaign_id}}]").attr('selected', 'selected');
   }
