@@ -1,5 +1,5 @@
 from datetime import datetime, date, timedelta
-from home import settings
+from core import settings
 import pytz
 
 def parse_time(time):

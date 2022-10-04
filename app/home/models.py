@@ -2,7 +2,7 @@ from django.db import models
 
 from driver import wppdriver
 
-from home import settings
+from core import settings
 from shutil import rmtree #Eliminar las carpetas de session
 import datetime
 

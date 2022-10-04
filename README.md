@@ -19,5 +19,5 @@ Whatsapp bots manager. Send massive amout of messages without whatsapp bussiness
 
 #### Start the server
 ```
-  docker-compose up|
+  docker-compose up
 ```

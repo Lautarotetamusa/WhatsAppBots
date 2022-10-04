@@ -7,7 +7,7 @@ from django.contrib import messages
 from home.models import Bot, Campaign, Message, Response
 from home.forms  import CampaignForm, BotForm
 from utils import csvfunctions
-from home import settings
+from core import settings
 
 import datetime                 #Para poder calcular la fecha de cierre de sesion
 

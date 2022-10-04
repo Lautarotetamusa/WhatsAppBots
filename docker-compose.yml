@@ -21,7 +21,7 @@ services:
     container_name: celery
     command: >
         sh -c "/bin/sh start_xvfb.sh
-               celery -A home.celery worker -l INFO -E"
+               celery -A core.celery worker -l INFO -E"
     volumes:
       - ./app:/app
       - /dev/shm:/dev/shm
@@ -36,7 +36,7 @@ services:
     container_name: celery-beat
     command: >
         sh -c "/bin/sh start_xvfb.sh
-               celery -A home.celery beat -l INFO"
+               celery -A core.celery beat -l INFO"
     volumes:
       - ./app:/app
       - /dev/shm:/dev/shm
