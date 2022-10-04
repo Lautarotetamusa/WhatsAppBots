@@ -5,7 +5,7 @@ from celery.utils.log import get_task_logger
 from core.celery import app
 from core import settings
 
-from home.models import Campaign, Bot, Message, Response
+from home.models import Campaign, Bot, Message, Conversation
 from utils.timefunctions import parse_time
 from utils import spintax
 from datetime import datetime, date, timedelta
@@ -79,20 +79,18 @@ def manage_campaign():
 #Envia un mensaje desde un bot a un numero y guarda los resultados
 @shared_task
 #send_message(bot, post["phone"], campaign, msg)
-def send_message(bot, reciver, campaign, text, max_tries=2):
-
-    print("Sending message to", reciver)
+def send_message(conver, bot, text, max_tries=2):
+    print(conver)
 
     for _ in range(max_tries):
         message = Message(
-            sender = bot,
-            campaign = campaign,
+            conversation = conver,
             text = text,
-            reciver = reciver
+            type = Message.SENDED
         )
 
         try:
-            bot.send(reciver, text)
+            bot.send(conver.client, text)
             print("Sended successfuly")
             message.error = None
             message.consume = bot.consumed()
@@ -107,8 +105,6 @@ def send_message(bot, reciver, campaign, text, max_tries=2):
             message.error = e
             print("Error sending, retrying", e)
 
-
-    message.success = (message.error == None)
     message.save()
 
 #Envia todos los mensajes en un dia
@@ -165,31 +161,58 @@ def send_messages(campaign_pk):
                 print(e)
                 continue
 
+            #Obtener la convesacion con esa persona, sino existe la creamos
+            conver = Conversation.objects.get_or_create(
+                bot=bot,
+                client=post["phone"],
+                campaign=campaign
+            )[0] #get_or_create retorna una tupla (object, bool): si bool es False encontro el objecto
+
             #Send the message
-            msg = spintax.format(campaign.spintax, post)
-            send_message(bot, post["phone"], campaign, msg)
+            text = spintax.format(campaign.spintax, post)
+            send_message(conver, bot, text)
 
             #Autoresponses
             if campaign.response_spintax != "":
                 new_messages = bot.get_messages()
-
                 for message in new_messages:
-                    if Message.objects.filter(reciver=message["number"]).count() == 1:
+
+                    conver = Conversation.objects.get_or_create(
+                        bot=bot,
+                        client=message["number"],
+                        campaign=campaign
+                    )[0]
+
+                    cant_recived = conver.message_set.filter(type=Message.RECIVED).count()
+
+                    if  cant_recived == 0:
+                        #Guardamos el mensaje recibido
+                        Message.objects.create(
+                            conversation = conver,
+                            text = text,
+                            type = Message.RECIVED
+                        )
+
                         print("++++++++++++++++++++++++++++++++++")
                         print("Answer of:", message["number"])
                         print(message["text"])
 
-                        response = Response(
-                            sender = message["number"],
-                            reciver= bot,
-                            text   = message["text"],
-                            campaign = campaign
-                        )
-                        response.save()
-
-                        msg = spintax.spin(campaign.response_spintax)
-                        send_message(bot, message["number"], campaign, msg)
+                        #Enviamos la autorespuesta
+                        text = spintax.spin(campaign.response_spintax)
+                        send_message(conver, bot, text)
                         print("++++++++++++++++++++++++++++++++++")
+                    elif cant_recived == 1:
+                        #Guardamos el mensaje recibido
+                        Message.objects.create(
+                            conversation = conver,
+                            text = text,
+                            type = Message.RECIVED
+                        )
+                        print("++++++++++++++++++++++++++++++++++")
+                        print("Answer of:", message["number"])
+                        print("Saving response")
+                        print("++++++++++++++++++++++++++++++++++")
+
 
             bot.close()
             print("----------------------------------")

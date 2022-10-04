@@ -45,7 +45,6 @@ class Campaign(models.Model):
     posts = models.FileField(upload_to='posts', default=None)
     nro_post = models.IntegerField(default=0)
     status = models.IntegerField(default=1, choices=STATUS_CHOICES)
-    #campaign.status == Status.FINISHED
     task_id = models.CharField(max_length=40, default="")
 
     spintax = models.CharField(max_length=500)
@@ -57,21 +56,31 @@ class Campaign(models.Model):
     start_at = models.TimeField()
     end_at = models.TimeField()
     rnd_time = models.IntegerField(default=0)         #Tiempo aleatorio en el que comienza y terminan la campaña en un dia
-    #random_range = models.IntegerField(default=0)
+
+class Conversation(models.Model):
+    bot = models.ForeignKey(Bot, on_delete=models.CASCADE)
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    client = models.CharField(max_length=15)
+    start  = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.bot.phone} => {self.client}"
 
 class Message(models.Model):
-    sender = models.ForeignKey(Bot, on_delete=models.CASCADE)
-    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
-    reciver = models.CharField(max_length=15)
+    SENDED  = 0
+    RECIVED = 1
+    STATUS_CHOICES = (
+        (SENDED, 'Sended'),
+        (RECIVED, 'Recived')
+    )
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     text = models.CharField(max_length=500)
+    time = models.DateTimeField(auto_now_add=True)
+    type = models.IntegerField(choices=STATUS_CHOICES)
 
-    sended_at = models.DateTimeField(auto_now_add=True)
-    consume = models.FloatField(null=True)
-    success = models.BooleanField(default=False, null=True)
-    error = models.CharField(max_length=100, default=None, null=True)
+    error = models.CharField(max_length=100, null=True)
+    def success(self):
+        return self.error == None
 
-class Response(models.Model):
-    sender   = models.CharField(max_length=15) #El que envia es el cliente
-    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
-    reciver  = models.ForeignKey(Bot, on_delete=models.CASCADE) #El que recibe es el bot
-    text = models.CharField(max_length=250)
+    def __str__(self):
+        return f"{self.text}"
